@@ -250,11 +250,17 @@ def main():
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
 			model = load_model(args.checkpoint_path)
-			print ("Model loaded")
+			print ("Model loaded: ", model)
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
+			print("0xBADCAFE: fps: {} WxH: {}x{}".format(fps, frame_w, frame_h))
+			
+			# out = cv2.VideoWriter('temp/result.avi', 
+			# 						cv2.VideoWriter_fourcc(*'DIVX'), fps, (frame_w, frame_h))
+			# out = cv2.VideoWriter('temp/result.avi', 
+			# 						cv2.VideoWriter_fourcc(*'RGBA'), fps, (frame_w, frame_h)) #creates a 3GB file :-O
 			out = cv2.VideoWriter('temp/result.avi', 
-									cv2.VideoWriter_fourcc(*'DIVX'), fps, (frame_w, frame_h))
+									cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_w, frame_h))
 
 		img_batch = torch.FloatTensor(np.transpose(img_batch, (0, 3, 1, 2))).to(device)
 		mel_batch = torch.FloatTensor(np.transpose(mel_batch, (0, 3, 1, 2))).to(device)
@@ -273,7 +279,7 @@ def main():
 
 	out.release()
 
-	command = 'ffmpeg -y -i {} -i {} -strict -2 -q:v 1 {}'.format(args.audio, 'temp/result.avi', args.outfile)
+	command = 'ffmpeg -y -i {} -i {} -strict -2 -q:v 1 -b:v 16M {}'.format(args.audio, 'temp/result.avi', args.outfile)
 	subprocess.call(command, shell=platform.system() != 'Windows')
 
 if __name__ == '__main__':
