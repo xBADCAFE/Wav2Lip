@@ -250,7 +250,7 @@ def main():
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
 			model = load_model(args.checkpoint_path)
-			print ("Model loaded: ", model)
+			#print ("Model loaded: ", model)
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
 			print("0xBADCAFE: fps: {} WxH: {}x{}".format(fps, frame_w, frame_h))
